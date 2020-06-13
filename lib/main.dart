@@ -1,5 +1,16 @@
+
+
+
+
+// jramiro 123456 Admin, puede hacer los 3
+// jperez 123456 Warehouse , no puede borrar
+
+
+
+
 import 'package:flutter/material.dart';
 import 'package:piratebay/screens/home.dart';
+import 'package:piratebay/screens/user_manage_screen.dart';
 import 'package:provider/provider.dart';
 
 import './screens/splash_screen.dart';
@@ -19,7 +30,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
-          title: 'MyShop',
+          title: 'PirateBay',
           theme: ThemeData(
             primarySwatch: Colors.blue,
             accentColor: Colors.blueAccent,
@@ -37,6 +48,7 @@ class MyApp extends StatelessWidget {
                 ),
           routes: {
             // '/': (context) => FirstScreen(),
+            '/manage/user': (ctx) => UserManageScreen(),
           },
         ),
       ),

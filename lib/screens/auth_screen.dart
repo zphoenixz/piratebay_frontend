@@ -140,10 +140,10 @@ class _AuthCardState extends State<AuthCard> {
         );
       } else {
         // Sign user up
-        await Provider.of<Auth>(context, listen: false).signup(
-          _authData['username'],
-          _authData['password'],
-        );
+        // await Provider.of<Auth>(context, listen: false).signup(
+        //   _authData['username'],
+        //   _authData['password'],
+        // );
       }
     } on HttpException catch (error) {
       // var errorMessage = 'Authentication failed';
@@ -158,9 +158,11 @@ class _AuthCardState extends State<AuthCard> {
       // } else if (error.toString().contains('INVALID_PASSWORD')) {
       //   errorMessage = 'Invalid password.';
       // }
+      
       var errorMessage = error.toString();
       _showErrorDialog(errorMessage);
     } catch (error) {
+      print(error);
       const errorMessage =
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
