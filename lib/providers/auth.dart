@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:piratebay/models/user.dart';
@@ -31,6 +31,13 @@ class Auth with ChangeNotifier {
 
   String get userId {
     return _userId;
+  }
+
+  String get authToken {
+    // if (_showFavoritesOnly) {
+    //   return _items.where((prodItem) => prodItem.isFavorite).toList();
+    // }
+    return _authToken;
   }
 
   Future<void> login(String username, String password) async {
@@ -84,6 +91,8 @@ class Auth with ChangeNotifier {
       );
 
       final responseData = json.decode(response.body);
+      // final extractedData = json.decode(response.body) as Map<String, dynamic>;
+
       if (response.statusCode != 200) {
         throw HttpException(responseData['message']);
       }
@@ -208,7 +217,7 @@ class Auth with ChangeNotifier {
       } catch (error) {
         throw error;
       }
-    }else{
+    } else {
       return null;
     }
   }
