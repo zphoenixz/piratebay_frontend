@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final order = orderFromJson(jsonString);
-
 import 'dart:convert';
 
 Order orderFromJson(String str) => Order.fromJson(json.decode(str));
@@ -16,6 +12,10 @@ class Order {
         this.warehouseId,
         this.userOrder,
         this.orderDate,
+        this.preparedDate,
+        this.shippedDate,
+        this.deliveredDate,
+        this.orderStatus,
     });
 
     int orderId;
@@ -24,6 +24,10 @@ class Order {
     int warehouseId;
     UserOrder userOrder;
     String orderDate;
+    dynamic preparedDate;
+    dynamic shippedDate;
+    dynamic deliveredDate;
+    String orderStatus;
 
     factory Order.fromJson(Map<String, dynamic> json) => Order(
         orderId: json["orderId"],
@@ -32,6 +36,10 @@ class Order {
         warehouseId: json["warehouseId"],
         userOrder: UserOrder.fromJson(json["userOrder"]),
         orderDate: json["orderDate"],
+        preparedDate: json["preparedDate"],
+        shippedDate: json["shippedDate"],
+        deliveredDate: json["deliveredDate"],
+        orderStatus: json["orderStatus"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -41,6 +49,10 @@ class Order {
         "warehouseId": warehouseId,
         "userOrder": userOrder.toJson(),
         "orderDate": orderDate,
+        "preparedDate": preparedDate,
+        "shippedDate": shippedDate,
+        "deliveredDate": deliveredDate,
+        "orderStatus": orderStatus,
     };
 }
 

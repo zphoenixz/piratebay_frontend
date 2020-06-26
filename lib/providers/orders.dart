@@ -6,8 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:piratebay/models/order.dart';
 import 'package:piratebay/providers/auth.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
 class Orders with ChangeNotifier {
   final Auth auth;
 
@@ -36,11 +34,11 @@ class Orders with ChangeNotifier {
           loadedOrders.add(newOrder);
         });
         // notifyListeners();
-        // print("-----------------");
-        // print(extractedData);
-        // print("-----------------");
-        // print(extractedData[1]);
-        // print("-----------------");
+        print("-----------------");
+        print(extractedData);
+        print("-----------------");
+        print(extractedData[1]);
+        print("-----------------");
         return loadedOrders;
       } catch (error) {
         throw (error);

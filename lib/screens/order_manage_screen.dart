@@ -12,7 +12,9 @@ class OrderManageScreen extends StatefulWidget {
 }
 
 class _OrderManageScreenState extends State<OrderManageScreen> {
-  List<Order> list = [];
+  List<Order> ordersList = [];
+  List<Order> filteredOrdersList = [];
+
   Auth auth;
   int _currentIndex = 0;
   // var refreshKey = GlobalKey<RefreshIndicatorState>();
@@ -37,14 +39,45 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
     _orders = Provider.of<Orders>(context, listen: false);
     List<Order> listAux = await _orders.fetchAndSetOrders();
 
-    if (listAux != null) {
+    if (ordersList != null) {
       // print(listAux);
-      setState(() {
-        list = listAux;
-      });
+      // setState(() {
+        ordersList = listAux;
+      // });
+      filterOrders();
     } else {
       Navigator.of(context).popUntil((route) => route.isFirst);
     }
+  }
+
+  void filterOrders() {
+    List<Order> filteredAuxList = [];
+
+    ordersList.forEach(
+      (element) {
+        if (_currentIndex == 0) {
+          if (element.orderStatus == "paid") {
+            filteredAuxList.add(element);
+          }
+        }else if (_currentIndex == 1) {
+          if (element.orderStatus == "prepared") {
+            filteredAuxList.add(element);
+          }
+        }else if (_currentIndex == 2) {
+          if (element.orderStatus == "shipped") {
+            filteredAuxList.add(element);
+          }
+        }else if (_currentIndex == 3) {
+          if (element.orderStatus == "delivered") {
+            filteredAuxList.add(element);
+          }
+        }
+      },
+    );
+
+    setState(() {
+      filteredOrdersList = filteredAuxList;
+    });
   }
 
   @override
@@ -54,23 +87,23 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
       appBar: AppBar(
         title: Text("Active Orders"),
       ),
-      body:
-      list.length != 0
+      body: ordersList.length != 0
           ? RefreshIndicator(
               // key: refreshKey,
               child: ListView.separated(
                 separatorBuilder: (context, index) => Divider(
                   color: Colors.black,
                 ),
-                itemCount: list.length,
+                itemCount: filteredOrdersList.length,
                 itemBuilder: (context, i) => ListTile(
-                  title: Text('Order Id: ${list[i].orderId}'),
+                  title: Text('Order Id: ${filteredOrdersList[i].orderId}'),
                   // subtitle: Text('Username: ${list[i]['username']}'),
                   subtitle: Column(
                     children: <Widget>[
-                      Text('Date: ${DateFormat.yMEd().add_jms().format(DateTime.parse(list[i].orderDate))}'),
-                      Text('Client: ${list[i].userOrder.username}'),
-                      Text('Addres: ${list[i].address}'),
+                      Text(
+                          'Date: ${DateFormat.yMEd().add_jms().format(DateTime.parse(filteredOrdersList[i].orderDate))}'),
+                      Text('Client: ${filteredOrdersList[i].userOrder.username}'),
+                      Text('Addres: ${filteredOrdersList[i].address}'),
                     ],
                   ),
                   trailing: Wrap(
@@ -99,24 +132,25 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.filter_2),
-            title: Text("Ready"),
+            title: Text("Prepared"),
             backgroundColor: Colors.yellow[700],
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.filter_3),
-            title: Text("Sent"),
+            title: Text("Shipped"),
             backgroundColor: Colors.green,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.filter_4),
-            title: Text("Received"),
+            title: Text("Delivered"),
             backgroundColor: Colors.blue,
           )
         ],
-        onTap: (index){
+        onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
+          filterOrders();
         },
       ),
     );
