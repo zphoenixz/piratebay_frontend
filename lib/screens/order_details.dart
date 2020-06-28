@@ -171,13 +171,22 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           .currentState.value["${productOrder.product.productName}_received"];
       print('qttyCommit: $qttyCommit');
       print('qttyCommit: $qttyReceived');
-      await _ordersProvider.updateOrderProductQty(_order.orderId,
-          productOrder.productOrderId, qttyCommit, qttyReceived);
+      final response = await _ordersProvider.updateOrderProductQty(
+          _order.orderId,
+          productOrder.productOrderId,
+          qttyCommit,
+          qttyReceived);
+      if (response == null) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
       // await Future.delayed(Duration(seconds: 1));
     });
 
-    await _ordersProvider.updateOrderStatus(_order.orderId, _nextOrderStatus);
-
+    final response = await _ordersProvider.updateOrderStatus(
+        _order.orderId, _nextOrderStatus);
+    if (response == null) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
     setState(() {
       isLoading = false;
     });
