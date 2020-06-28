@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:piratebay/providers/orders.dart';
 import 'package:piratebay/screens/home.dart';
+import 'package:piratebay/screens/order_details.dart';
 import 'package:piratebay/screens/order_manage_screen.dart';
 import 'package:piratebay/screens/user_manage_screen.dart';
 import 'package:provider/provider.dart';
@@ -23,10 +24,9 @@ class MyApp extends StatelessWidget {
           value: Auth(),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
-          create: (_) => Orders(null),
-          update: (ctx, auth, previousProducts) => Orders(
-            auth,
-          ),
+          create: (_) => Orders(),
+          update: (_, auth, previousOrders) => 
+          previousOrders..update(auth)
         ),
       ],
       child: Consumer<Auth>(
@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
             // '/': (context) => FirstScreen(),
             '/manage/user': (ctx) => UserManageScreen(),
             '/manage/order': (ctx) => OrderManageScreen(),
+            '/manage/order/detail': (ctx) => OrderDetailsScreen()
           },
         ),
       ),

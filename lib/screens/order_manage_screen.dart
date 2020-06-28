@@ -25,24 +25,19 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
   @override
   void initState() {
     super.initState();
-
     refreshList();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   refreshList();
-  // }
+
 
   Future<void> refreshList() async {
     _orders = Provider.of<Orders>(context, listen: false);
-    List<Order> listAux = await _orders.fetchAndSetOrders();
+    List<Order> listAux = await _orders.getAllOrders();
 
-    if (ordersList != null) {
+    if (listAux != null) {
       // print(listAux);
       // setState(() {
-        ordersList = listAux;
+      ordersList = listAux;
       // });
       filterOrders();
     } else {
@@ -59,15 +54,15 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
           if (element.orderStatus == "paid") {
             filteredAuxList.add(element);
           }
-        }else if (_currentIndex == 1) {
+        } else if (_currentIndex == 1) {
           if (element.orderStatus == "prepared") {
             filteredAuxList.add(element);
           }
-        }else if (_currentIndex == 2) {
+        } else if (_currentIndex == 2) {
           if (element.orderStatus == "shipped") {
             filteredAuxList.add(element);
           }
-        }else if (_currentIndex == 3) {
+        } else if (_currentIndex == 3) {
           if (element.orderStatus == "delivered") {
             filteredAuxList.add(element);
           }
@@ -82,6 +77,7 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     auth = Provider.of<Auth>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
@@ -95,26 +91,34 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
                   color: Colors.black,
                 ),
                 itemCount: filteredOrdersList.length,
-                itemBuilder: (context, i) => ListTile(
-                  title: Text('Order Id: ${filteredOrdersList[i].orderId}'),
-                  // subtitle: Text('Username: ${list[i]['username']}'),
-                  subtitle: Column(
-                    children: <Widget>[
-                      Text(
-                          'Date: ${DateFormat.yMEd().add_jms().format(DateTime.parse(filteredOrdersList[i].orderDate))}'),
-                      Text('Client: ${filteredOrdersList[i].userOrder.username}'),
-                      Text('Addres: ${filteredOrdersList[i].address}'),
-                    ],
-                  ),
-                  trailing: Wrap(
-                    spacing: 12, // space between two icons
-                    children: <Widget>[
-                      auth.features['BUTTON_DELETE_ORDER'] != null
-                          ? Icon(Icons.delete_forever)
-                          : SizedBox(
-                              width: 2,
-                            ), // icon-2
-                    ],
+                itemBuilder: (context, i) => GestureDetector(
+                  onTap: () {
+                    print('tap on order ${filteredOrdersList[i].orderId}');
+                    _orders.chosenOrder = filteredOrdersList[i];
+                    Navigator.pushNamed(context, '/manage/order/detail');
+                  },
+                  child: ListTile(
+                    title: Text('Order Id: ${filteredOrdersList[i].orderId}'),
+                    // subtitle: Text('Username: ${list[i]['username']}'),
+                    subtitle: Column(
+                      children: <Widget>[
+                        Text(
+                            'Date: ${DateFormat.yMEd().add_jms().format(DateTime.parse(filteredOrdersList[i].orderDate))}'),
+                        Text(
+                            'Client: ${filteredOrdersList[i].userOrder.username}'),
+                        Text('Addres: ${filteredOrdersList[i].address}'),
+                      ],
+                    ),
+                    trailing: Wrap(
+                      spacing: 12, // space between two icons
+                      children: <Widget>[
+                        auth.features['BUTTON_DELETE_ORDER'] != null
+                            ? Icon(Icons.delete_forever)
+                            : SizedBox(
+                                width: 2,
+                              ), // icon-2
+                      ],
+                    ),
                   ),
                 ),
               ),

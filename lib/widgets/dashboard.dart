@@ -23,7 +23,7 @@ class Dashboard extends StatelessWidget {
             children: <Widget>[
               auth.features['PAGE_USER_MANAGEMENT'] != null ? _menuButton(_verticalSpace, 'assets/buttons/manage_users.png',
                   '/manage/user', context) : Container(),
-              auth.features['PAGE_ORDER_MANAGEMENT'] != null ? _menuButton(_verticalSpace, 'assets/buttons/manage_products.png',
+              auth.features['PAGE_ORDER_MANAGEMENT'] != null ? _menuButton(_verticalSpace, 'assets/buttons/manage_orders.png',
                   '/manage/order', context) : Container(),
               _logoutButton(
                   _verticalSpace, 'assets/buttons/log_out.png', context),

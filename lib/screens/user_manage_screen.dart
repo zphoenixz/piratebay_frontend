@@ -23,12 +23,6 @@ class _UserManageScreenState extends State<UserManageScreen> {
     refreshList();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   refreshList();
-  // }
-
   Future<void> refreshList() async {
     auth = Provider.of<Auth>(context, listen: false);
     var listAux = await auth.getAllActiveUsers();

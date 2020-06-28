@@ -4,21 +4,34 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:piratebay/models/order.dart';
+import 'package:piratebay/models/productOrder.dart';
 import 'package:piratebay/providers/auth.dart';
 
 class Orders with ChangeNotifier {
-  final Auth auth;
+  Auth _auth;
 
-  Orders(this.auth);
+  void update(Auth auth) {
+    _auth = auth;
+  }
+
+  // Orders(this.auth);
   final String _orderPath = 'http://10.0.2.2:8008/api/v1/order';
 
-  Future<List<Order>> fetchAndSetOrders() async {
-    bool session = await auth.checkAuthToken();
+  Order _chosenOrder;
+
+  Order get chosenOrder => _chosenOrder;
+
+  set chosenOrder(Order chosenOrder) {
+    _chosenOrder = chosenOrder;
+  }
+
+  Future<List<Order>> getAllOrders() async {
+    bool session = await _auth.checkAuthToken();
 
     if (session) {
       try {
         var url = '$_orderPath/';
-        String authToken = auth.authToken;
+        String authToken = _auth.authToken;
         final response = await http.get(
           url,
           headers: {
@@ -28,19 +41,136 @@ class Orders with ChangeNotifier {
 
         final List<Order> loadedOrders = [];
         final List<dynamic> extractedData = json.decode(response.body);
-        print(extractedData);
+        // print(extractedData);
         extractedData.forEach((data) {
           Order newOrder = orderFromJson(json.encode(data));
           loadedOrders.add(newOrder);
         });
+
+        return loadedOrders;
+      } catch (error) {
+        throw (error);
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<ProductOrder>> getOrderProducts(int orderId) async {
+    bool session = await _auth.checkAuthToken();
+
+    if (session) {
+      try {
+        var url = '$_orderPath/$orderId/product';
+        String authToken = _auth.authToken;
+        final response = await http.get(
+          url,
+          headers: {
+            'Authorization': 'Bearer $authToken',
+          },
+        );
+
+        final List<ProductOrder> loadedProductOrders = [];
+        final List<dynamic> extractedData = json.decode(response.body);
+        // print(extractedData);
+        extractedData.forEach((data) {
+          ProductOrder newOrder = productOrderFromJson(json.encode(data));
+          loadedProductOrders.add(newOrder);
+        });
+        // notifyListeners();
+        // print("-----------------");
+        // print(extractedData);
+        // print("-----------------");
+        // print(extractedData[0]);
+        // print("-----------------");
+        return loadedProductOrders;
+      } catch (error) {
+        print("error in getOrderProducts");
+        throw (error);
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<dynamic> updateOrderProductQty(
+      int orderId, int productOrderId, int qttyCommit, int qttyReceived) async {
+    bool session = await _auth.checkAuthToken();
+
+    if (session) {
+      try {
+        var url = '$_orderPath/$orderId/product';
+        String authToken = _auth.authToken;
+        final response = await http.patch(
+          url,
+          headers: {
+            'Authorization': 'Bearer $authToken',
+            'content-type': 'application/json',
+          },
+          body: json.encode(
+            {
+              'productOrderId': productOrderId,
+              'qttyCommit': qttyCommit,
+              'qttyReceived': qttyReceived
+            },
+          ),
+        );
+
+        final extractedData = json.decode(response.body);
+        // print(extractedData);
+        // final ProductOrder updatedProductOrder =
+        //     productOrderFromJson(json.encode(extractedData));
         // notifyListeners();
         print("-----------------");
         print(extractedData);
-        print("-----------------");
-        print(extractedData[1]);
-        print("-----------------");
-        return loadedOrders;
+        // print("-----------------");
+        // print(extractedData[0]);
+        // print("-----------------");
+        return extractedData;
       } catch (error) {
+        print("error in updateOrderProductQty");
+        print(error);
+        throw (error);
+      }
+    } else {
+      return null;
+    }
+  }
+
+  // http://localhost:8008/api/v1/order/1
+  Future<dynamic> updateOrderStatus(int orderId, String orderStatus) async {
+    bool session = await _auth.checkAuthToken();
+
+    if (session) {
+      try {
+        var url = '$_orderPath/$orderId';
+        String authToken = _auth.authToken;
+        final response = await http.patch(
+          url,
+          headers: {
+            'Authorization': 'Bearer $authToken',
+            'content-type': 'application/json',
+          },
+          body: json.encode(
+            {
+              'orderStatus': orderStatus,
+            },
+          ),
+        );
+
+        final extractedData = json.decode(response.body);
+        // print(extractedData);
+        // final Order updatedOrder = orderFromJson(json.encode(extractedData));
+        // notifyListeners();
+        print("-----------------");
+        print(extractedData);
+        // print("-----------------");
+        // print(extractedData[0]);
+        // print("-----------------");
+        return extractedData;
+      } catch (error) {
+        print("error in updateOrderStatus");
+        print(error);
         throw (error);
       }
     } else {
