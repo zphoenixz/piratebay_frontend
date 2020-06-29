@@ -206,6 +206,8 @@ class Auth with ChangeNotifier {
 
   Future<dynamic> getUserById(String userId) async {
     bool session = await checkAuthToken();
+    print("result of session");
+    print(session);
     if (session) {
       try {
         final url = '$_userPath/$userId';

@@ -117,15 +117,8 @@ class Orders with ChangeNotifier {
         );
 
         final extractedData = json.decode(response.body);
-        // print(extractedData);
-        // final ProductOrder updatedProductOrder =
-        //     productOrderFromJson(json.encode(extractedData));
-        // notifyListeners();
         print("-----------------");
         print(extractedData);
-        // print("-----------------");
-        // print(extractedData[0]);
-        // print("-----------------");
         return extractedData;
       } catch (error) {
         print("error in updateOrderProductQty");
@@ -159,17 +152,40 @@ class Orders with ChangeNotifier {
         );
 
         final extractedData = json.decode(response.body);
-        // print(extractedData);
-        // final Order updatedOrder = orderFromJson(json.encode(extractedData));
-        // notifyListeners();
         print("-----------------");
         print(extractedData);
-        // print("-----------------");
-        // print(extractedData[0]);
-        // print("-----------------");
         return extractedData;
       } catch (error) {
         print("error in updateOrderStatus");
+        print(error);
+        throw (error);
+      }
+    } else {
+      return null;
+    }
+  }
+
+    Future<dynamic> deleteOrder(int orderId) async {
+    bool session = await _auth.checkAuthToken();
+
+    if (session) {
+      try {
+        var url = '$_orderPath/$orderId';
+        String authToken = _auth.authToken;
+        final response = await http.delete(
+          url,
+          headers: {
+            'Authorization': 'Bearer $authToken',
+            'content-type': 'application/json',
+          }
+        );
+
+        final extractedData = json.decode(response.body);
+        print("-----------------");
+        print(extractedData);
+        return extractedData;
+      } catch (error) {
+        print("error in deleteOrder");
         print(error);
         throw (error);
       }

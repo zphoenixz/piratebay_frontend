@@ -5,6 +5,7 @@ import 'package:piratebay/providers/auth.dart';
 import 'package:piratebay/providers/orders.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class OrderManageScreen extends StatefulWidget {
   @override
@@ -27,8 +28,6 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
     super.initState();
     refreshList();
   }
-
-
 
   Future<void> refreshList() async {
     _orders = Provider.of<Orders>(context, listen: false);
@@ -75,9 +74,47 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
     });
   }
 
+  _onAlertButtonsPressed(context, orderId) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: "Update",
+      desc: "Are you sure to delete this order?",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "No",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          color: Colors.red[300],
+        ),
+        DialogButton(
+          child: Text(
+            "Yes",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            deleteOrder(orderId);
+          },
+          color: Colors.green[300],
+        )
+      ],
+    ).show();
+  }
+
+  Future<void> deleteOrder(int orderId) async {
+    final response = await _orders.deleteOrder(orderId);
+    if (response == null) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } else {
+      refreshList();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     auth = Provider.of<Auth>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
@@ -93,7 +130,8 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
                 itemCount: filteredOrdersList.length,
                 itemBuilder: (context, i) => GestureDetector(
                   onTap: () {
-                    print('tap on order ${filteredOrdersList[i].orderId}');
+                    final selectedOrder = filteredOrdersList[i].orderId;
+                    print('details on order $selectedOrder');
                     _orders.chosenOrder = filteredOrdersList[i];
                     Navigator.pushNamed(context, '/manage/order/detail');
                   },
@@ -113,7 +151,16 @@ class _OrderManageScreenState extends State<OrderManageScreen> {
                       spacing: 12, // space between two icons
                       children: <Widget>[
                         auth.features['BUTTON_DELETE_ORDER'] != null
-                            ? Icon(Icons.delete_forever)
+                            ? GestureDetector(
+                                onTap: () {
+                                  final selectedOrder =
+                                      filteredOrdersList[i].orderId;
+                                  print('delete order $selectedOrder');
+                                  _onAlertButtonsPressed(
+                                      context, selectedOrder);
+                                },
+                                child: Icon(Icons.delete_forever),
+                              )
                             : SizedBox(
                                 width: 2,
                               ), // icon-2

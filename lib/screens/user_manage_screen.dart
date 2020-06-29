@@ -65,7 +65,7 @@ class _UserManageScreenState extends State<UserManageScreen> {
                     spacing: 12, // space between two icons
                     children: <Widget>[
                       Icon(Icons.edit), // icon-1
-                      auth.features['BUTTON_DELETE_USER'] != null
+                      auth.features['BUTTON_DELETE_ORDER'] != null
                           ? Icon(Icons.delete_forever)
                           : SizedBox(
                               width: 2,
